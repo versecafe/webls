@@ -19,6 +19,7 @@ fn robot_to_string(robot: Robot) -> String {
   |> list.map(fn(route) { "Allow: " <> route })
   |> list.reduce(fn(acc, line) { acc <> "\n" <> line })
   |> result.unwrap("")
+  <> "\n"
   <> robot.disallowed_routes
   |> list.map(fn(route) { "Disallow: " <> route })
   |> list.reduce(fn(acc, line) { acc <> "\n" <> line })
