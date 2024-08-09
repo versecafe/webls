@@ -11,7 +11,7 @@ gleam add webls@1
 ```
 
 ```gleam
-import webls/rss{RssChannel, RssItem}
+import webls/rss.{RssChannel, RssItem}
 
 pub fn generate_rss_feed() -> String {
   let channels = [
