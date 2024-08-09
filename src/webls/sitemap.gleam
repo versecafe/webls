@@ -4,6 +4,7 @@ import gleam/list
 import gleam/option.{type Option, Some}
 import gleam/result
 
+/// Generates a sitemap.xml string from a sitemap
 pub fn to_string(sitemap: Sitemap) -> String {
   let channel_content =
     sitemap.items
@@ -52,15 +53,27 @@ fn sitemap_item_to_string(item: SitemapItem) -> String {
 
 /// A complete sitemap
 pub type Sitemap {
-  Sitemap(url: String, last_modified: Option(Time), items: List(SitemapItem))
+  Sitemap(
+    /// The url location of the sitemap
+    url: String,
+    /// The time of last modification of the sitemap
+    last_modified: Option(Time),
+    /// The list of items contained within the sitemap
+    items: List(SitemapItem),
+  )
 }
 
 /// A item within a sitemap
 pub type SitemapItem {
   SitemapItem(
+    /// The location/url of the page
     loc: String,
+    /// The time of last modification of the page
     last_modified: Option(Time),
+    /// How frequently the page is likely to continue to change
     change_frequency: Option(ChangeFrequency),
+    /// The priority of the page compared to others within the sitemap
+    /// Must be between 0.0 and 1.0
     priority: Option(Float),
   )
 }
