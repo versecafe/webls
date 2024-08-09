@@ -1,0 +1,13 @@
+name = "webls"
+version = "1.0.0"
+
+description = "A simple web utility library for RSS feeds, Sitemaps, Robots.txt, etc."
+licences = ["Apache-2.0"]
+repository = { type = "github", user = "versecafe", repo = "webls" }
+
+[dependencies]
+gleam_stdlib = ">= 0.34.0 and < 2.0.0"
+birl = ">= 1.7.1 and < 2.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"

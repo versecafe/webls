@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>Gleam RSS</title>
+<description>A test RSS feed</description>
+<link>https://gleam.run</link>
+<item>
+<title>Gleam 1.0</title>
+<link>https://gleam.run/blog/gleam-1.0</link>
+<description>Gleam 1.0 is here!</description>
+<pubDate>2024-08-08T21:47:31.562-05:00</pubDate>
+<guid isPermaLink="true">gleam.run</guid>
+</item>
+<item>
+<title>Gleam 0.10</title>
+<link>https://gleam.run/blog/gleam-0.10</link>
+<description>Gleam 0.10 is here!</description>
+<pubDate>2024-08-08T21:47:31.575-05:00</pubDate>
+<author>ve.re.ca@protonmail.com</author>
+<guid isPermaLink="true">gleam.run</guid>
+</item></channel>
+</rss>
