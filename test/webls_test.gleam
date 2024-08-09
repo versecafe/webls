@@ -32,7 +32,7 @@ pub fn rss_to_string_test() -> Nil {
           link: "https://gleam.run/blog/gleam-0.10",
           description: "Gleam 0.10 is here!",
           pub_date: birl.now(),
-          author: Some("ve.re.ca@protonmail.com"),
+          author: Some("user@example.com"),
           guid: #("gleam.run", Some(True)),
         ),
       ],
