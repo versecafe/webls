@@ -3,6 +3,7 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
+import webls/robots.{Robot, RobotsConfig}
 import webls/rss.{RssChannel, RssItem}
 import webls/sitemap.{Sitemap, SitemapItem}
 
@@ -87,5 +88,30 @@ pub fn sitemap_to_string_test() -> Nil {
     |> string.length()
 
   { length > 400 }
+  |> should.be_true
+}
+
+/// Confirms that the robots.txt correctly stringifies using known length
+pub fn robots_to_string_test() -> Nil {
+  let config =
+    RobotsConfig(sitemap_url: "https://gleam.run/sitemap.xml", robots: [
+      Robot(
+        user_agent: "googlebot",
+        allowed_routes: ["/posts/", "/contact/"],
+        disallowed_routes: ["/admin/", "/private/"],
+      ),
+      Robot(
+        user_agent: "bingbot",
+        allowed_routes: ["/posts/", "/contact/"],
+        disallowed_routes: ["/admin/", "/private/"],
+      ),
+    ])
+
+  let length: Int =
+    config
+    |> robots.to_string
+    |> string.length()
+
+  { length > 200 }
   |> should.be_true
 }
