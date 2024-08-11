@@ -1,6 +1,8 @@
 import gleam/list
 import gleam/result
 
+// Stringify ------------------------------------------------------------------
+//
 pub fn to_string(config: RobotsConfig) -> String {
   "Sitemap: "
   <> config.sitemap_url
@@ -25,6 +27,22 @@ fn robot_to_string(robot: Robot) -> String {
   |> list.reduce(fn(acc, line) { acc <> "\n" <> line })
   |> result.unwrap("")
 }
+
+// Builder Patern -------------------------------------------------------------
+
+pub fn robot(user_agent: String) -> Robot {
+  Robot(user_agent, [], [])
+}
+
+pub fn allowed_routes(robot: Robot, routes: List(String)) -> Robot {
+  Robot(..robot, allowed_routes: routes)
+}
+
+pub fn disallowed_routes(robot: Robot, routes: List(String)) -> Robot {
+  Robot(..robot, disallowed_routes: routes)
+}
+
+// Types ----------------------------------------------------------------------
 
 /// The configuration for a robots.txt file
 pub type RobotsConfig {

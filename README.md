@@ -46,7 +46,7 @@ Further documentation can be found at <https://hexdocs.pm/webls>.
 | ---------- | --------- | ----------------- | ---------- |
 | Sitemap    | Complete  | Complete          | None       |
 | RSS v2.0   | Complete  | None              | None       |
-| Robots.txt | Complete  | None              | None       |
+| Robots.txt | Complete  | Complete          | None       |
 
 ## Development
 

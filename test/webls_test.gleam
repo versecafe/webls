@@ -158,3 +158,32 @@ pub fn robots_to_string_test() -> Nil {
   { length > 200 }
   |> should.be_true
 }
+
+pub fn robots_builder_test() -> Nil {
+  let built =
+    RobotsConfig("https://example.com/sitemap.xml", [
+      robots.robot("googlebot")
+        |> robots.allowed_routes(["/posts/", "/contact/"]),
+      robots.robot("bingbot")
+        |> robots.allowed_routes(["/posts/", "/contact/", "/private/"]),
+      robots.robot("yandex")
+        |> robots.disallowed_routes(["/"]),
+    ])
+
+  let manual =
+    RobotsConfig("https://example.com/sitemap.xml", [
+      Robot(
+        user_agent: "googlebot",
+        allowed_routes: ["/posts/", "/contact/"],
+        disallowed_routes: [],
+      ),
+      Robot(
+        user_agent: "bingbot",
+        allowed_routes: ["/posts/", "/contact/", "/private/"],
+        disallowed_routes: [],
+      ),
+      Robot(user_agent: "yandex", allowed_routes: [], disallowed_routes: ["/"]),
+    ])
+
+  built |> should.equal(manual)
+}
