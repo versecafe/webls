@@ -32,6 +32,22 @@ pub fn sitemap() -> String {
 
 Further documentation can be found at <https://hexdocs.pm/webls>.
 
+## Current Standards Compliance
+
+| Protocol   | Version  | Status   |
+| ---------- | -------- | -------- |
+| Sitemaps   | 0.9      | Complete |
+| RSS v2.0   | 2.0.1    | Partial  |
+| Robots.txt | 1997 IDS | Complete |
+
+## Utility Support
+
+| Type       | to_string | Builder Functions | Validators |
+| ---------- | --------- | ----------------- | ---------- |
+| Sitemap    | Complete  | Complete          | None       |
+| RSS v2.0   | Complete  | None              | None       |
+| Robots.txt | Complete  | None              | None       |
+
 ## Development
 
 ```sh
