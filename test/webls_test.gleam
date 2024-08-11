@@ -91,6 +91,49 @@ pub fn sitemap_to_string_test() -> Nil {
   |> should.be_true
 }
 
+pub fn sitemap_builder_test() -> Nil {
+  let built =
+    Sitemap(url: "https://gleam.run/sitemap.xml", last_modified: None, items: [
+      sitemap.item("https://gleam.run")
+        |> sitemap.with_frequency(sitemap.Monthly)
+        |> sitemap.with_priority(1.0),
+      sitemap.item("https://gleam.run/blog")
+        |> sitemap.with_frequency(sitemap.Weekly),
+      sitemap.item("https://gleam.run/blog/gleam-1.0"),
+      sitemap.item("https://gleam.run/blog/gleam-1.1"),
+    ])
+
+  let manual =
+    Sitemap(url: "https://gleam.run/sitemap.xml", last_modified: None, items: [
+      SitemapItem(
+        loc: "https://gleam.run",
+        last_modified: None,
+        change_frequency: Some(sitemap.Monthly),
+        priority: Some(1.0),
+      ),
+      SitemapItem(
+        loc: "https://gleam.run/blog",
+        last_modified: None,
+        change_frequency: Some(sitemap.Weekly),
+        priority: None,
+      ),
+      SitemapItem(
+        loc: "https://gleam.run/blog/gleam-1.0",
+        last_modified: None,
+        change_frequency: None,
+        priority: None,
+      ),
+      SitemapItem(
+        loc: "https://gleam.run/blog/gleam-1.1",
+        last_modified: None,
+        change_frequency: None,
+        priority: None,
+      ),
+    ])
+
+  built |> should.equal(manual)
+}
+
 /// Confirms that the robots.txt correctly stringifies using known length
 pub fn robots_to_string_test() -> Nil {
   let config =
