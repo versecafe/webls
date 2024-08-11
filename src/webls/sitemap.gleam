@@ -1,8 +1,10 @@
 import birl.{type Time}
 import gleam/float
 import gleam/list
-import gleam/option.{type Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
+
+// Stringify ------------------------------------------------------------------
 
 /// Generates a sitemap.xml string from a sitemap
 pub fn to_string(sitemap: Sitemap) -> String {
@@ -50,6 +52,38 @@ fn sitemap_item_to_string(item: SitemapItem) -> String {
   }
   <> "</url>"
 }
+
+// Builder Patern -------------------------------------------------------------
+
+/// Create a base sitemap item with just the URL location
+pub fn item(loc: String) -> SitemapItem {
+  SitemapItem(
+    loc: loc,
+    last_modified: None,
+    change_frequency: None,
+    priority: None,
+  )
+}
+
+/// Add a change frequency to the sitemap item
+pub fn with_frequency(
+  item: SitemapItem,
+  frequency: ChangeFrequency,
+) -> SitemapItem {
+  SitemapItem(..item, change_frequency: Some(frequency))
+}
+
+/// Add a priority to the sitemap item
+pub fn with_priority(item: SitemapItem, priority: Float) -> SitemapItem {
+  SitemapItem(..item, priority: Some(priority))
+}
+
+/// Add a last modified time to the sitemap item
+pub fn with_modified(item: SitemapItem, modified: Time) -> SitemapItem {
+  SitemapItem(..item, last_modified: Some(modified))
+}
+
+// Types ----------------------------------------------------------------------
 
 /// A complete sitemap
 pub type Sitemap {

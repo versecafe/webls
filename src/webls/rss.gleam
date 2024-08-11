@@ -3,6 +3,8 @@ import gleam/list
 import gleam/option.{type Option, Some}
 import gleam/result
 
+// Stringify ------------------------------------------------------------------
+
 /// Generates an RSS feed as a string from a list of channels
 pub fn to_string(channels: List(RssChannel)) -> String {
   let channel_content =
@@ -70,6 +72,8 @@ fn rss_item_to_string(item: RssItem) -> String {
   }
   <> "</item>"
 }
+
+// Types ----------------------------------------------------------------------
 
 /// A simple RSS channel
 pub type RssChannel {

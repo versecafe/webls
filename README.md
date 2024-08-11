@@ -7,41 +7,26 @@ your common web listing needs.
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/webls/)
 
 ```sh
-gleam add webls@1
+gleam add webls
 ```
 
 ```gleam
-import webls/rss.{RssChannel, RssItem}
+import gleam/option.{None}
+import webls/sitemap.{Sitemap}
 
-pub fn generate_rss_feed() -> String {
-  let channels = [
-    RssChannel(
-      title: "Gleam RSS",
-      description: "A test RSS feed",
-      link: "https://gleam.run",
-      items: [
-        RssItem(
-          title: "Gleam 1.0",
-          link: "https://gleam.run/blog/gleam-1.0",
-          description: "Gleam 1.0 is here!",
-          pub_date: birl.now(),
-          author: None,
-          guid: #("gleam.run", Some(True)),
-        ),
-        RssItem(
-          title: "Gleam 0.10",
-          link: "https://gleam.run/blog/gleam-0.10",
-          description: "Gleam 0.10 is here!",
-          pub_date: birl.now(),
-          author: Some("user@example.com"),
-          guid: #("gleam.run", Some(True)),
-        ),
-      ],
-    ),
-  ]
+pub fn sitemap() -> String {
+  let sitemap =
+    Sitemap(url: "https://gleam.run/sitemap.xml", last_modified: None, items: [
+      sitemap.item("https://gleam.run")
+        |> sitemap.with_frequency(sitemap.Monthly)
+        |> sitemap.with_priority(1.0),
+      sitemap.item("https://gleam.run/blog")
+        |> sitemap.with_frequency(sitemap.Weekly),
+      sitemap.item("https://gleam.run/blog/gleam-1.0"),
+      sitemap.item("https://gleam.run/blog/gleam-1.1"),
+    ])
 
-  channels
-  |> rss.to_string()
+  sitemap |> sitemap.to_string()
 }
 ```
 
