@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0.1">
 <channel>
 <title>Gleam RSS</title>
-<description>A test RSS feed</description>
 <link>https://gleam.run</link>
+<description>A test RSS feed</description>
+<language>en</language>
+<category>Releases</category>
 <item>
 <title>Gleam 1.0</title>
-<link>https://gleam.run/blog/gleam-1.0</link>
 <description>Gleam 1.0 is here!</description>
-<pubDate>2024-08-08T21:47:31.562-05:00</pubDate>
-<guid isPermaLink="true">gleam.run</guid>
+<link>https://gleam.run/blog/gleam-1.0</link>
+<pubDate>2024-08-11T20:22:50.481-05:00</pubDate>
+<guid isPermaLink="false">gleam 1.0</guid>
 </item>
 <item>
 <title>Gleam 0.10</title>
-<link>https://gleam.run/blog/gleam-0.10</link>
 <description>Gleam 0.10 is here!</description>
-<pubDate>2024-08-08T21:47:31.575-05:00</pubDate>
+<link>https://gleam.run/blog/gleam-0.10</link>
 <author>user@example.com</author>
-<guid isPermaLink="true">gleam.run</guid>
+<guid isPermaLink="true">gleam 0.10</guid>
 </item></channel>
 </rss>

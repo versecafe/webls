@@ -55,6 +55,29 @@ fn sitemap_item_to_string(item: SitemapItem) -> String {
 
 // Builder Patern -------------------------------------------------------------
 
+/// Create a sitemap with a url
+pub fn sitemap(url: String) -> Sitemap {
+  Sitemap(url: url, last_modified: None, items: [])
+}
+
+/// Adds a list of sitemap items to the sitemap
+pub fn with_sitemap_items(sitemap: Sitemap, items: List(SitemapItem)) -> Sitemap {
+  Sitemap(..sitemap, items: list.concat([sitemap.items, items]))
+}
+
+/// Adds a sitemap item to the sitemap
+pub fn with_sitemap_item(sitemap: Sitemap, item: SitemapItem) -> Sitemap {
+  Sitemap(..sitemap, items: [item, ..sitemap.items])
+}
+
+/// Add a last modified time to the sitemap
+pub fn with_sitemap_last_modified(
+  sitemap: Sitemap,
+  last_modified: Time,
+) -> Sitemap {
+  Sitemap(..sitemap, last_modified: Some(last_modified))
+}
+
 /// Create a base sitemap item with just the URL location
 pub fn item(loc: String) -> SitemapItem {
   SitemapItem(
@@ -66,7 +89,7 @@ pub fn item(loc: String) -> SitemapItem {
 }
 
 /// Add a change frequency to the sitemap item
-pub fn with_frequency(
+pub fn with_item_frequency(
   item: SitemapItem,
   frequency: ChangeFrequency,
 ) -> SitemapItem {
@@ -74,12 +97,12 @@ pub fn with_frequency(
 }
 
 /// Add a priority to the sitemap item
-pub fn with_priority(item: SitemapItem, priority: Float) -> SitemapItem {
+pub fn with_item_priority(item: SitemapItem, priority: Float) -> SitemapItem {
   SitemapItem(..item, priority: Some(priority))
 }
 
 /// Add a last modified time to the sitemap item
-pub fn with_modified(item: SitemapItem, modified: Time) -> SitemapItem {
+pub fn with_item_last_modified(item: SitemapItem, modified: Time) -> SitemapItem {
   SitemapItem(..item, last_modified: Some(modified))
 }
 

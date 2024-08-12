@@ -1,11 +1,13 @@
-Sitemap: https://gleam.run/sitemap.xml
+Sitemap: https://example.com/sitemap.xml
 
 User-agent: googlebot
 Allow: /posts/
-Allow: /contact/Disallow: /admin/
+Allow: /contact/
+Disallow: /admin/
 Disallow: /private/
 
 User-agent: bingbot
 Allow: /posts/
-Allow: /contact/Disallow: /admin/
-Disallow: /private/
+Allow: /contact/
+Allow: /private/
+Disallow: /

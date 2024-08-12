@@ -30,16 +30,50 @@ fn robot_to_string(robot: Robot) -> String {
 
 // Builder Patern -------------------------------------------------------------
 
+/// Creates a robots config with a sitemap url
+pub fn config(sitemap_url: String) -> RobotsConfig {
+  RobotsConfig(sitemap_url: sitemap_url, robots: [])
+}
+
+/// Adds a list of robots to the robots config
+pub fn with_config_robots(
+  config: RobotsConfig,
+  robots: List(Robot),
+) -> RobotsConfig {
+  RobotsConfig(..config, robots: list.concat([config.robots, robots]))
+}
+
+/// Adds a robot to the robots config
+pub fn with_config_robot(config: RobotsConfig, robot: Robot) -> RobotsConfig {
+  RobotsConfig(..config, robots: [robot, ..config.robots])
+}
+
+/// Creates a robot policy
 pub fn robot(user_agent: String) -> Robot {
   Robot(user_agent, [], [])
 }
 
-pub fn allowed_routes(robot: Robot, routes: List(String)) -> Robot {
-  Robot(..robot, allowed_routes: routes)
+/// Adds a list of allowed routes to the robot policy
+pub fn with_robot_allowed_routes(robot: Robot, routes: List(String)) -> Robot {
+  Robot(..robot, allowed_routes: list.concat([robot.allowed_routes, routes]))
 }
 
-pub fn disallowed_routes(robot: Robot, routes: List(String)) -> Robot {
-  Robot(..robot, disallowed_routes: routes)
+/// Adds a allowed route to the robot policy
+pub fn with_robot_allowed_route(robot: Robot, route: String) -> Robot {
+  Robot(..robot, allowed_routes: [route, ..robot.allowed_routes])
+}
+
+/// Adds a list of disallowed routes to the robot policy
+pub fn with_robot_disallowed_routes(robot: Robot, routes: List(String)) -> Robot {
+  Robot(
+    ..robot,
+    disallowed_routes: list.concat([robot.disallowed_routes, routes]),
+  )
+}
+
+/// Adds a disallowed route to the robot policy
+pub fn with_robot_disallowed_route(robot: Robot, route: String) -> Robot {
+  Robot(..robot, disallowed_routes: [route, ..robot.disallowed_routes])
 }
 
 // Types ----------------------------------------------------------------------
