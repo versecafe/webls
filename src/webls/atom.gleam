@@ -6,8 +6,16 @@ import gleam/option.{type Option, None, Some}
 
 // Builder Patern -------------------------------------------------------------
 
-pub fn text(text: String, text_type: TextTypes) -> Text {
-  Text(content: text, data_type: Some(text_type))
+pub fn plain_text(input: String) -> Text {
+  PlainText(input)
+}
+
+pub fn html(input: String) -> Text {
+  Html(input)
+}
+
+pub fn xhtml(input: String) -> Text {
+  XHtml(input)
 }
 
 pub fn link(href: String) -> Link {
@@ -65,10 +73,10 @@ pub fn with_person_uri(person: Person, uri: String) -> Person {
   Person(..person, uri: Some(uri))
 }
 
-pub fn feed(id: String, title: String, updated: Time) -> AtomFeed {
+pub fn feed(id: String, title: Text, updated: Time) -> AtomFeed {
   AtomFeed(
     id: id,
-    title: text(title, PlainText),
+    title: title,
     updated: updated,
     authors: [],
     link: None,
@@ -280,13 +288,9 @@ pub type AtomEntry {
 }
 
 pub type Text {
-  Text(content: String, data_type: Option(TextTypes))
-}
-
-pub type TextTypes {
-  PlainText
-  Html
-  Xhtml
+  PlainText(value: String)
+  Html(value: String)
+  XHtml(value: String)
 }
 
 pub type Source {
