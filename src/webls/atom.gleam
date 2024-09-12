@@ -1,8 +1,206 @@
 import birl.{type Time}
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/result
 
 // Stringify ------------------------------------------------------------------
+
+/// Converts an Atom feed to a string of a valid Atom 1.0 feed
+pub fn to_string(feed: AtomFeed) -> String {
+  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+  <> atom_feed_to_string(feed)
+  <> "</feed>"
+}
+
+fn atom_feed_to_string(feed: AtomFeed) -> String {
+  "\n<id>"
+  <> feed.id
+  <> "</id>\n"
+  <> "<title>"
+  <> text_to_string(feed.title)
+  <> "</title>\n"
+  <> "<updated>"
+  <> birl.to_iso8601(feed.updated)
+  <> "</updated>\n"
+  <> list.map(feed.authors, person_to_string)
+  |> list.reduce(fn(acc, author) { acc <> author })
+  |> result.unwrap("")
+  <> case feed.link {
+    Some(link) -> link_to_string(link)
+    None -> ""
+  }
+  <> list.map(feed.categories, category_to_string)
+  |> list.reduce(fn(acc, category) { acc <> category })
+  |> result.unwrap("")
+  <> list.map(feed.contributors, person_to_string)
+  |> list.reduce(fn(acc, contributor) { acc <> contributor })
+  |> result.unwrap("")
+  <> case feed.generator {
+    Some(generator) -> generator_to_string(generator)
+    None -> ""
+  }
+  <> case feed.icon {
+    Some(icon) -> "<icon>" <> icon <> "</icon>\n"
+    None -> ""
+  }
+  <> case feed.logo {
+    Some(logo) -> "<logo>" <> logo <> "</logo>\n"
+    None -> ""
+  }
+  <> case feed.rights {
+    Some(rights) -> "<rights>" <> text_to_string(rights) <> "</rights>\n"
+    None -> ""
+  }
+  <> case feed.subtitle {
+    Some(subtitle) -> "<subtitle>" <> subtitle <> "</subtitle>\n"
+    None -> ""
+  }
+  <> list.map(feed.entries, atom_entry_to_string)
+  |> list.reduce(fn(acc, entry) { acc <> entry })
+  |> result.unwrap("")
+}
+
+fn atom_entry_to_string(entry: AtomEntry) -> String {
+  "<entry>\n"
+  <> "<id>"
+  <> entry.id
+  <> "</id>\n"
+  <> "<title>"
+  <> text_to_string(entry.title)
+  <> "</title>\n"
+  <> "<updated>"
+  <> birl.to_iso8601(entry.updated)
+  <> "</updated>\n"
+  <> list.map(entry.authors, person_to_string)
+  |> list.reduce(fn(acc, author) { acc <> author })
+  |> result.unwrap("")
+  <> case entry.content {
+    Some(content) -> "<content>" <> text_to_string(content) <> "</content>\n"
+    None -> ""
+  }
+  <> case entry.link {
+    Some(link) -> link_to_string(link)
+    None -> ""
+  }
+  <> case entry.summary {
+    Some(summary) -> "<summary>" <> text_to_string(summary) <> "</summary>\n"
+    None -> ""
+  }
+  <> list.map(entry.categories, category_to_string)
+  |> list.reduce(fn(acc, category) { acc <> category })
+  |> result.unwrap("")
+  <> list.map(entry.contributors, person_to_string)
+  |> list.reduce(fn(acc, contributor) { acc <> contributor })
+  |> result.unwrap("")
+  <> case entry.published {
+    Some(published) ->
+      "<published>" <> birl.to_iso8601(published) <> "</published>\n"
+    None -> ""
+  }
+  <> case entry.rights {
+    Some(rights) -> "<rights>" <> text_to_string(rights) <> "</rights>\n"
+    None -> ""
+  }
+  <> case entry.source {
+    Some(source) -> source_to_string(source)
+    None -> ""
+  }
+  <> "</entry>\n"
+}
+
+fn person_to_string(person: Person) -> String {
+  "<author>\n"
+  <> "<name>"
+  <> person.name
+  <> "</name>\n"
+  <> case person.email {
+    Some(email) -> "<email>" <> email <> "</email>\n"
+    None -> ""
+  }
+  <> case person.uri {
+    Some(uri) -> "<uri>" <> uri <> "</uri>\n"
+    None -> ""
+  }
+  <> "</author>\n"
+}
+
+fn link_to_string(link: Link) -> String {
+  "<link href=\""
+  <> link.href
+  <> "\""
+  <> case link.rel {
+    Some(rel) -> " rel=\"" <> rel <> "\""
+    None -> ""
+  }
+  <> case link.content_type {
+    Some(content_type) -> " type=\"" <> content_type <> "\""
+    None -> ""
+  }
+  <> case link.hreflang {
+    Some(hreflang) -> " hreflang=\"" <> hreflang <> "\""
+    None -> ""
+  }
+  <> case link.title {
+    Some(title) -> " title=\"" <> title <> "\""
+    None -> ""
+  }
+  <> case link.length {
+    Some(length) -> " length=\"" <> int.to_string(length) <> "\""
+    None -> ""
+  }
+  <> "/>\n"
+}
+
+fn category_to_string(category: Category) -> String {
+  "<category term=\""
+  <> category.term
+  <> "\""
+  <> case category.scheme {
+    Some(scheme) -> " scheme=\"" <> scheme <> "\""
+    None -> ""
+  }
+  <> case category.label {
+    Some(label) -> " label=\"" <> label <> "\""
+    None -> ""
+  }
+  <> "/>\n"
+}
+
+fn generator_to_string(generator: Generator) -> String {
+  "<generator"
+  <> case generator.uri {
+    Some(uri) -> " uri=\"" <> uri <> "\""
+    None -> ""
+  }
+  <> case generator.version {
+    Some(version) -> " version=\"" <> version <> "\""
+    None -> ""
+  }
+  <> ">webls</generator>\n"
+}
+
+fn source_to_string(source: Source) -> String {
+  "<source>\n"
+  <> "<id>"
+  <> source.id
+  <> "</id>\n"
+  <> "<title>"
+  <> source.title
+  <> "</title>\n"
+  <> "<updated>"
+  <> birl.to_iso8601(source.updated)
+  <> "</updated>\n"
+  <> "</source>\n"
+}
+
+fn text_to_string(text: Text) -> String {
+  case text {
+    PlainText(value) -> value
+    Html(value) -> "<type=\"html\">" <> value <> "</type>"
+    XHtml(value) -> "<type=\"xhtml\">" <> value <> "</type>"
+  }
+}
 
 // Builder Patern -------------------------------------------------------------
 
