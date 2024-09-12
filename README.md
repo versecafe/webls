@@ -70,7 +70,7 @@ Further documentation can be found at <https://hexdocs.pm/webls>.
 | Sitemaps   | 0.9      | Complete |
 | RSS        | 2.0.1    | Complete |
 | Robots.txt | 1997 IDS | Complete |
-| Atom       | 1.0      | Planning |
+| Atom       | 1.0      | Complete |
 
 > A Note on the RSS 2.0 spec, the PICS field for content ratings is not going
 > to be supported as the PICS standard was discontinued more than a decade ago.
@@ -82,7 +82,7 @@ Further documentation can be found at <https://hexdocs.pm/webls>.
 | Sitemap    | Complete  | Complete          | None       |
 | RSS v2.0   | Complete  | Complete          | None       |
 | Robots.txt | Complete  | Complete          | None       |
-| Atom       | Planning  | Planning          | None       |
+| Atom       | Complete  | Complete          | None       |
 
 ## Development
 
