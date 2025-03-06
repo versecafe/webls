@@ -319,7 +319,7 @@ pub fn with_entry_updated(entry: AtomEntry, updated: Time) -> AtomEntry {
 }
 
 pub fn with_entry_authors(entry: AtomEntry, authors: List(Person)) -> AtomEntry {
-  AtomEntry(..entry, authors: list.concat([entry.authors, authors]))
+  AtomEntry(..entry, authors: list.flatten([entry.authors, authors]))
 }
 
 pub fn with_entry_content(entry: AtomEntry, content: Text) -> AtomEntry {
@@ -338,7 +338,7 @@ pub fn with_entry_categories(
   entry: AtomEntry,
   categories: List(Category),
 ) -> AtomEntry {
-  AtomEntry(..entry, categories: list.concat([entry.categories, categories]))
+  AtomEntry(..entry, categories: list.flatten([entry.categories, categories]))
 }
 
 pub fn with_entry_contributors(
@@ -347,7 +347,7 @@ pub fn with_entry_contributors(
 ) -> AtomEntry {
   AtomEntry(
     ..entry,
-    contributors: list.concat([entry.contributors, contributors]),
+    contributors: list.flatten([entry.contributors, contributors]),
   )
 }
 
@@ -368,7 +368,7 @@ pub fn with_feed_author(feed: AtomFeed, author: Person) -> AtomFeed {
 }
 
 pub fn with_feed_authors(feed: AtomFeed, authors: List(Person)) -> AtomFeed {
-  AtomFeed(..feed, authors: list.concat([feed.authors, authors]))
+  AtomFeed(..feed, authors: list.flatten([feed.authors, authors]))
 }
 
 pub fn with_feed_link(feed: AtomFeed, link: Link) -> AtomFeed {
@@ -383,7 +383,7 @@ pub fn with_feed_categories(
   feed: AtomFeed,
   categories: List(Category),
 ) -> AtomFeed {
-  AtomFeed(..feed, categories: list.concat([feed.categories, categories]))
+  AtomFeed(..feed, categories: list.flatten([feed.categories, categories]))
 }
 
 pub fn with_feed_contributor(feed: AtomFeed, contributor: Person) -> AtomFeed {
@@ -394,7 +394,10 @@ pub fn with_feed_contributors(
   feed: AtomFeed,
   contributors: List(Person),
 ) -> AtomFeed {
-  AtomFeed(..feed, contributors: list.concat([feed.contributors, contributors]))
+  AtomFeed(
+    ..feed,
+    contributors: list.flatten([feed.contributors, contributors]),
+  )
 }
 
 pub fn with_feed_generator(feed: AtomFeed, generator: Generator) -> AtomFeed {
@@ -422,7 +425,7 @@ pub fn with_feed_entry(feed: AtomFeed, entry: AtomEntry) -> AtomFeed {
 }
 
 pub fn with_feed_entries(feed: AtomFeed, entries: List(AtomEntry)) -> AtomFeed {
-  AtomFeed(..feed, entries: list.concat([feed.entries, entries]))
+  AtomFeed(..feed, entries: list.flatten([feed.entries, entries]))
 }
 
 // Types ----------------------------------------------------------------------

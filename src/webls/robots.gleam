@@ -40,7 +40,7 @@ pub fn with_config_robots(
   config: RobotsConfig,
   robots: List(Robot),
 ) -> RobotsConfig {
-  RobotsConfig(..config, robots: list.concat([config.robots, robots]))
+  RobotsConfig(..config, robots: list.flatten([config.robots, robots]))
 }
 
 /// Adds a robot to the robots config
@@ -55,7 +55,7 @@ pub fn robot(user_agent: String) -> Robot {
 
 /// Adds a list of allowed routes to the robot policy
 pub fn with_robot_allowed_routes(robot: Robot, routes: List(String)) -> Robot {
-  Robot(..robot, allowed_routes: list.concat([robot.allowed_routes, routes]))
+  Robot(..robot, allowed_routes: list.flatten([robot.allowed_routes, routes]))
 }
 
 /// Adds a allowed route to the robot policy
@@ -67,7 +67,7 @@ pub fn with_robot_allowed_route(robot: Robot, route: String) -> Robot {
 pub fn with_robot_disallowed_routes(robot: Robot, routes: List(String)) -> Robot {
   Robot(
     ..robot,
-    disallowed_routes: list.concat([robot.disallowed_routes, routes]),
+    disallowed_routes: list.flatten([robot.disallowed_routes, routes]),
   )
 }
 

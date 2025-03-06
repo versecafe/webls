@@ -62,7 +62,7 @@ pub fn sitemap(url: String) -> Sitemap {
 
 /// Adds a list of sitemap items to the sitemap
 pub fn with_sitemap_items(sitemap: Sitemap, items: List(SitemapItem)) -> Sitemap {
-  Sitemap(..sitemap, items: list.concat([sitemap.items, items]))
+  Sitemap(..sitemap, items: list.flatten([sitemap.items, items]))
 }
 
 /// Adds a sitemap item to the sitemap

@@ -321,7 +321,7 @@ pub fn with_channel_categories(
 ) -> RssChannel {
   RssChannel(
     ..channel,
-    categories: list.concat([channel.categories, categories]),
+    categories: list.flatten([channel.categories, categories]),
   )
 }
 
@@ -388,7 +388,7 @@ pub fn with_channel_items(
   channel: RssChannel,
   items: List(RssItem),
 ) -> RssChannel {
-  RssChannel(..channel, items: list.concat([channel.items, items]))
+  RssChannel(..channel, items: list.flatten([channel.items, items]))
 }
 
 /// Adds a RSS item to the RSS channel
