@@ -234,7 +234,7 @@ fn rss_item_to_string(item: RssItem) -> String {
   <> "</item>"
 }
 
-// Builder Patern -------------------------------------------------------------
+// Builder Pattern -------------------------------------------------------------
 
 /// Creates a base RSS channel
 pub fn channel(title: String, description: String, link: String) -> RssChannel {

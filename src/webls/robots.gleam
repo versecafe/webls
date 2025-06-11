@@ -2,7 +2,7 @@ import gleam/list
 import gleam/result
 
 // Stringify ------------------------------------------------------------------
-//
+
 pub fn to_string(config: RobotsConfig) -> String {
   "Sitemap: "
   <> config.sitemap_url
