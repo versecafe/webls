@@ -6,7 +6,7 @@ words = [
     # domain words
     "webls", "rss",
     # code words
-    "ttl", "perma"
+    "ttl", "perma", "rebar", "otp", "erlef"
 ]
 
 # Words that should always be flagged as incorrect
