@@ -1,0 +1,23 @@
+# List of dictionaries to use for spell checking
+dictionaries = ["en_us"]
+
+# Custom allowlist of words to ignore (case-insensitive)
+words = [
+    # domain words
+    "webls", "rss",
+    # code words
+    "ttl", "perma"
+]
+
+# Words that should always be flagged as incorrect
+flag_words = ["todo", "fixme"]
+
+# List of glob patterns for paths to ignore when spell checking
+ignore_paths = ["build/**/*"]
+
+# List of regex patterns to ignore when spell checking
+# Useful for domain-specific strings or patterns
+ignore_patterns = []
+
+# Whether to use global configuration (project config only)
+use_global = false
