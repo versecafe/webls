@@ -1,8 +1,9 @@
-import birl.{type Time}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/time/calendar
+import gleam/time/timestamp.{type Timestamp}
 
 // Stringify ------------------------------------------------------------------
 
@@ -55,13 +56,15 @@ fn rss_channel_to_string(channel: RssChannel) -> String {
   }
   <> case channel.pub_date {
     Some(pub_date) ->
-      "<pubDate>" <> pub_date |> birl.to_iso8601 <> "</pubDate>\n"
+      "<pubDate>"
+      <> pub_date |> timestamp.to_rfc3339(calendar.utc_offset)
+      <> "</pubDate>\n"
     _ -> ""
   }
   <> case channel.last_build_date {
     Some(last_build_date) ->
       "<lastBuildDate>"
-      <> last_build_date |> birl.to_iso8601
+      <> last_build_date |> timestamp.to_rfc3339(calendar.utc_offset)
       <> "</lastBuildDate>\n"
     _ -> ""
   }
@@ -158,7 +161,7 @@ fn rss_channel_to_string(channel: RssChannel) -> String {
     True -> {
       "<skipDays>"
       <> list.map(channel.skip_days, fn(day) {
-        "<day>" <> day |> birl.weekday_to_string <> "</day>"
+        "<day>" <> day |> weekday_to_string <> "</day>"
       })
       |> list.reduce(fn(acc, day) { acc <> "\n" <> day })
       |> result.unwrap("")
@@ -196,7 +199,9 @@ fn rss_item_to_string(item: RssItem) -> String {
   }
   <> case item.pub_date {
     Some(pub_date) ->
-      "<pubDate>" <> pub_date |> birl.to_iso8601 <> "</pubDate>\n"
+      "<pubDate>"
+      <> pub_date |> timestamp.to_rfc3339(calendar.utc_offset)
+      <> "</pubDate>\n"
     _ -> ""
   }
   <> item.categories
@@ -232,6 +237,18 @@ fn rss_item_to_string(item: RssItem) -> String {
     _ -> ""
   }
   <> "</item>"
+}
+
+fn weekday_to_string(weekday: Weekday) -> String {
+  case weekday {
+    Monday -> "Monday"
+    Tuesday -> "Tuesday"
+    Wednesday -> "Wednesday"
+    Thursday -> "Thursday"
+    Friday -> "Friday"
+    Saturday -> "Saturday"
+    Sunday -> "Sunday"
+  }
 }
 
 // Builder Pattern -------------------------------------------------------------
@@ -294,14 +311,17 @@ pub fn with_channel_web_master(
 }
 
 /// Sets the publication date of the RSS channel
-pub fn with_channel_pub_date(channel: RssChannel, pub_date: Time) -> RssChannel {
+pub fn with_channel_pub_date(
+  channel: RssChannel,
+  pub_date: Timestamp,
+) -> RssChannel {
   RssChannel(..channel, pub_date: Some(pub_date))
 }
 
 /// Sets the last build date of the RSS channel
 pub fn with_channel_last_build_date(
   channel: RssChannel,
-  last_build_date: Time,
+  last_build_date: Timestamp,
 ) -> RssChannel {
   RssChannel(..channel, last_build_date: Some(last_build_date))
 }
@@ -378,7 +398,7 @@ pub fn with_channel_skip_hours(
 /// Sets a list of days to skip in the RSS channel
 pub fn with_channel_skip_days(
   channel: RssChannel,
-  skip_days: List(birl.Weekday),
+  skip_days: List(Weekday),
 ) -> RssChannel {
   RssChannel(..channel, skip_days: skip_days)
 }
@@ -443,7 +463,7 @@ pub fn with_item_guid(item: RssItem, guid: #(String, Option(Bool))) -> RssItem {
 }
 
 /// Sets the publication date of the RSS item
-pub fn with_item_pub_date(item: RssItem, pub_date: Time) -> RssItem {
+pub fn with_item_pub_date(item: RssItem, pub_date: Timestamp) -> RssItem {
   RssItem(..item, pub_date: Some(pub_date))
 }
 
@@ -472,9 +492,9 @@ pub type RssChannel {
     /// The web master’s email address
     web_master: Option(String),
     /// The publication date of the RSS channel
-    pub_date: Option(Time),
+    pub_date: Option(Timestamp),
     /// The last build date of the RSS channel
-    last_build_date: Option(Time),
+    last_build_date: Option(Timestamp),
     /// A list of categories for the RSS channel
     categories: List(String),
     /// The generator program of the RSS channel, feel free to shout webls out!
@@ -492,7 +512,7 @@ pub type RssChannel {
     /// A list of hours in GMT which content aggregation should be skipped
     skip_hours: List(Int),
     /// A list of days to skip in the RSS channel
-    skip_days: List(birl.Weekday),
+    skip_days: List(Weekday),
     /// A list of items in the RSS channel
     items: List(RssItem),
   )
@@ -574,7 +594,7 @@ pub type RssItem {
     /// The RSS channel the item came from
     source: Option(String),
     /// The publication date of the RSS item
-    pub_date: Option(Time),
+    pub_date: Option(Timestamp),
     /// A list of categories for the RSS item
     categories: List(String),
     /// An optional enclosure resource for the RSS item
@@ -582,4 +602,14 @@ pub type RssItem {
     /// A guid and an optional boolean for whether it is a permalink
     guid: Option(#(String, Option(Bool))),
   )
+}
+
+pub type Weekday {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
 }

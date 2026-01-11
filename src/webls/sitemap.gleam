@@ -1,8 +1,9 @@
-import birl.{type Time}
 import gleam/float
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/time/calendar
+import gleam/time/timestamp.{type Timestamp}
 
 // Stringify ------------------------------------------------------------------
 
@@ -25,7 +26,10 @@ fn sitemap_item_to_string(item: SitemapItem) -> String {
   <> item.loc
   <> "</loc>\n"
   <> case item.last_modified {
-    Some(date) -> "<lastmod>" <> date |> birl.to_iso8601 <> "</lastmod>\n"
+    Some(date) ->
+      "<lastmod>"
+      <> date |> timestamp.to_rfc3339(calendar.utc_offset)
+      <> "</lastmod>\n"
     _ -> ""
   }
   <> case item.change_frequency {
@@ -73,7 +77,7 @@ pub fn with_sitemap_item(sitemap: Sitemap, item: SitemapItem) -> Sitemap {
 /// Add a last modified time to the sitemap
 pub fn with_sitemap_last_modified(
   sitemap: Sitemap,
-  last_modified: Time,
+  last_modified: Timestamp,
 ) -> Sitemap {
   Sitemap(..sitemap, last_modified: Some(last_modified))
 }
@@ -102,7 +106,10 @@ pub fn with_item_priority(item: SitemapItem, priority: Float) -> SitemapItem {
 }
 
 /// Add a last modified time to the sitemap item
-pub fn with_item_last_modified(item: SitemapItem, modified: Time) -> SitemapItem {
+pub fn with_item_last_modified(
+  item: SitemapItem,
+  modified: Timestamp,
+) -> SitemapItem {
   SitemapItem(..item, last_modified: Some(modified))
 }
 
@@ -114,7 +121,7 @@ pub type Sitemap {
     /// The url location of the sitemap
     url: String,
     /// The time of last modification of the sitemap
-    last_modified: Option(Time),
+    last_modified: Option(Timestamp),
     /// The list of items contained within the sitemap
     items: List(SitemapItem),
   )
@@ -126,7 +133,7 @@ pub type SitemapItem {
     /// The location/url of the page
     loc: String,
     /// The time of last modification of the page
-    last_modified: Option(Time),
+    last_modified: Option(Timestamp),
     /// How frequently the page is likely to continue to change
     change_frequency: Option(ChangeFrequency),
     /// The priority of the page compared to others within the sitemap
