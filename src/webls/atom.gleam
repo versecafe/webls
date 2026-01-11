@@ -1,8 +1,9 @@
-import birl.{type Time}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/time/calendar
+import gleam/time/timestamp.{type Timestamp}
 
 // Stringify ------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ fn atom_feed_to_string(feed: AtomFeed) -> String {
   <> text_to_string(feed.title)
   <> "</title>\n"
   <> "<updated>"
-  <> birl.to_iso8601(feed.updated)
+  <> timestamp.to_rfc3339(feed.updated, calendar.utc_offset)
   <> "</updated>\n"
   <> list.map(feed.authors, person_to_string)
   |> list.reduce(fn(acc, author) { acc <> author })
@@ -70,7 +71,7 @@ fn atom_entry_to_string(entry: AtomEntry) -> String {
   <> text_to_string(entry.title)
   <> "</title>\n"
   <> "<updated>"
-  <> birl.to_iso8601(entry.updated)
+  <> timestamp.to_rfc3339(entry.updated, calendar.utc_offset)
   <> "</updated>\n"
   <> list.map(entry.authors, person_to_string)
   |> list.reduce(fn(acc, author) { acc <> author })
@@ -95,7 +96,9 @@ fn atom_entry_to_string(entry: AtomEntry) -> String {
   |> result.unwrap("")
   <> case entry.published {
     Some(published) ->
-      "<published>" <> birl.to_iso8601(published) <> "</published>\n"
+      "<published>"
+      <> timestamp.to_rfc3339(published, calendar.utc_offset)
+      <> "</published>\n"
     None -> ""
   }
   <> case entry.rights {
@@ -189,7 +192,7 @@ fn source_to_string(source: Source) -> String {
   <> source.title
   <> "</title>\n"
   <> "<updated>"
-  <> birl.to_iso8601(source.updated)
+  <> timestamp.to_rfc3339(source.updated, calendar.utc_offset)
   <> "</updated>\n"
   <> "</source>\n"
 }
@@ -271,7 +274,7 @@ pub fn with_person_uri(person: Person, uri: String) -> Person {
   Person(..person, uri: Some(uri))
 }
 
-pub fn feed(id: String, title: Text, updated: Time) -> AtomFeed {
+pub fn feed(id: String, title: Text, updated: Timestamp) -> AtomFeed {
   AtomFeed(
     id: id,
     title: title,
@@ -289,7 +292,7 @@ pub fn feed(id: String, title: Text, updated: Time) -> AtomFeed {
   )
 }
 
-pub fn entry(id: String, title: Text, updated: Time) -> AtomEntry {
+pub fn entry(id: String, title: Text, updated: Timestamp) -> AtomEntry {
   AtomEntry(
     id: id,
     title: title,
@@ -314,7 +317,7 @@ pub fn with_entry_title(entry: AtomEntry, title: Text) -> AtomEntry {
   AtomEntry(..entry, title: title)
 }
 
-pub fn with_entry_updated(entry: AtomEntry, updated: Time) -> AtomEntry {
+pub fn with_entry_updated(entry: AtomEntry, updated: Timestamp) -> AtomEntry {
   AtomEntry(..entry, updated: updated)
 }
 
@@ -351,7 +354,7 @@ pub fn with_entry_contributors(
   )
 }
 
-pub fn with_entry_published(entry: AtomEntry, published: Time) -> AtomEntry {
+pub fn with_entry_published(entry: AtomEntry, published: Timestamp) -> AtomEntry {
   AtomEntry(..entry, published: Some(published))
 }
 
@@ -434,7 +437,7 @@ pub type AtomFeed {
   AtomFeed(
     id: String,
     title: Text,
-    updated: Time,
+    updated: Timestamp,
     authors: List(Person),
     link: Option(Link),
     categories: List(Category),
@@ -475,14 +478,14 @@ pub type AtomEntry {
   AtomEntry(
     id: String,
     title: Text,
-    updated: Time,
+    updated: Timestamp,
     authors: List(Person),
     content: Option(Text),
     link: Option(Link),
     summary: Option(Text),
     categories: List(Category),
     contributors: List(Person),
-    published: Option(Time),
+    published: Option(Timestamp),
     rights: Option(Text),
     source: Option(Source),
   )
@@ -495,5 +498,5 @@ pub type Text {
 }
 
 pub type Source {
-  Source(id: String, title: String, updated: Time)
+  Source(id: String, title: String, updated: Timestamp)
 }
