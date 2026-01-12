@@ -1,6 +1,6 @@
-import birl
 import gleam/option.{Some}
 import gleam/string
+import gleam/time/timestamp
 import gleeunit
 import gleeunit/should
 import webls/robots
@@ -20,7 +20,7 @@ pub fn rss_to_string_test() -> Nil {
     |> rss.with_channel_items([
       rss.item("Gleam 1.0", "Gleam 1.0 is here!")
         |> rss.with_item_link("https://gleam.run/blog/gleam-1.0")
-        |> rss.with_item_pub_date(birl.now())
+        |> rss.with_item_pub_date(timestamp.system_time())
         |> rss.with_item_guid(#("gleam 1.0", Some(False))),
       rss.item("Gleam 0.10", "Gleam 0.10 is here!")
         |> rss.with_item_link("https://gleam.run/blog/gleam-0.10")
@@ -42,7 +42,7 @@ pub fn rss_to_string_test() -> Nil {
 pub fn sitemap_to_string_test() -> Nil {
   let sitemap =
     sitemap.sitemap("https://gleam.run/sitemap.xml")
-    |> sitemap.with_sitemap_last_modified(birl.now())
+    |> sitemap.with_sitemap_last_modified(timestamp.system_time())
     |> sitemap.with_sitemap_items([
       sitemap.item("https://gleam.run")
         |> sitemap.with_item_frequency(sitemap.Monthly)
