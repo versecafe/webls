@@ -4,9 +4,12 @@ dictionaries = ["en_us"]
 # Custom allowlist of words to ignore (case-insensitive)
 words = [
     # domain words
-    "webls", "rss",
+    "webls", "rss", "googlebot", "bingbot",
     # code words
-    "ttl", "perma", "rebar", "otp", "erlef"
+    "ttl", "perma", "rebar", "otp", "erlef", "gleeunit",
+    "simplifile",
+    # other words
+    "versecafe"
 ]
 
 # Words that should always be flagged as incorrect

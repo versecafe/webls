@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+<title>Example Feed</title>
+<updated>2024-01-15T12:00:00Z</updated>
+<author>
+<name>John Doe</name>
+<email>john@example.com</email>
+<uri>https://example.com/john</uri>
+</author>
+<link href="https://example.com/" rel="alternate" type="text/html"/>
+<category term="technology" scheme="https://example.com/categories" label="Technology"/>
+<icon>https://example.com/icon.png</icon>
+<logo>https://example.com/logo.png</logo>
+<rights>Copyright 2024</rights>
+<subtitle>A subtitle for the feed</subtitle>
+<entry>
+<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+<title>Atom-Powered Robots Run Amok</title>
+<updated>2024-01-15T12:00:00Z</updated>
+<author>
+<name>Jane Doe</name>
+</author>
+<content><type="html"><p>Some interesting content.</p></type></content>
+<link href="https://example.com/entry/1" rel="alternate"/>
+<summary>A summary of the entry</summary>
+<category term="robots"/>
+<published>2024-01-15T12:00:00Z</published>
+<rights>CC BY 4.0</rights>
+</entry>
+<entry>
+<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6b</id>
+<title><type="xhtml"><div>Second Entry</div></type></title>
+<updated>2024-01-15T12:00:00Z</updated>
+<summary>Another summary</summary>
+</entry>
+</feed>
