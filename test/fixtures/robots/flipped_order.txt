@@ -1,0 +1,3 @@
+User-agent: googlebot
+Disallow: /admin/
+Allow: /posts/

@@ -1,0 +1,6 @@
+
+  Sitemap:   https://example.com/sitemap.xml  
+
+  User-agent:   *  
+  Allow:   /  
+
