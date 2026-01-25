@@ -68,8 +68,7 @@ pub fn robots_roundtrip_test() -> Nil {
 
 /// Confirms that parsing works when Sitemap directive is missing (it's optional)
 pub fn robots_from_string_no_sitemap_test() -> Nil {
-  let assert Ok(input) =
-    simplifile.read("test/fixtures/robots/no_sitemap.txt")
+  let assert Ok(input) = simplifile.read("test/fixtures/robots/no_sitemap.txt")
 
   let assert Ok(config) = robots.from_string(input)
 
@@ -82,8 +81,7 @@ pub fn robots_from_string_no_sitemap_test() -> Nil {
 
 /// Confirms parsing handles extra whitespace and blank lines
 pub fn robots_from_string_whitespace_test() -> Nil {
-  let assert Ok(input) =
-    simplifile.read("test/fixtures/robots/whitespace.txt")
+  let assert Ok(input) = simplifile.read("test/fixtures/robots/whitespace.txt")
 
   let assert Ok(config) = robots.from_string(input)
 
@@ -138,7 +136,9 @@ pub fn robots_from_string_invalid_test() -> Nil {
   let input = "User-agent: googlebot\nthis is not a valid directive\nAllow: /"
 
   robots.from_string(input)
-  |> should.equal(Error(robots.InvalidDirective("this is not a valid directive")))
+  |> should.equal(
+    Error(robots.InvalidDirective("this is not a valid directive")),
+  )
 }
 
 /// Confirms empty input returns empty config (not an error)

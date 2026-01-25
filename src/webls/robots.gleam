@@ -82,7 +82,10 @@ pub fn config_without_sitemap() -> RobotsConfig {
 }
 
 /// Sets the sitemap url on a robots config
-pub fn with_config_sitemap(config: RobotsConfig, sitemap_url: String) -> RobotsConfig {
+pub fn with_config_sitemap(
+  config: RobotsConfig,
+  sitemap_url: String,
+) -> RobotsConfig {
   RobotsConfig(..config, sitemap_url: Some(sitemap_url))
 }
 
@@ -190,9 +193,7 @@ pub fn from_string(input: String) -> Result(RobotsConfig, RobotsParseError) {
 }
 
 /// Validates that all lines are valid directives (contain `:`)
-fn validate_lines(
-  lines: List(String),
-) -> Result(Nil, RobotsParseError) {
+fn validate_lines(lines: List(String)) -> Result(Nil, RobotsParseError) {
   case lines {
     [] -> Ok(Nil)
     [line, ..rest] ->
