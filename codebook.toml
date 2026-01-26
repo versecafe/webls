@@ -7,7 +7,7 @@ words = [
     "webls", "rss", "googlebot", "bingbot",
     # code words
     "ttl", "perma", "rebar", "otp", "erlef", "gleeunit",
-    "simplifile",
+    "simplifile", "deno",
     # other words
     "versecafe"
 ]

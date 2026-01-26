@@ -3,13 +3,19 @@ name: test
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - { name: erlang, runtime: "" }
+          - { name: javascript, runtime: node }
+          - { name: javascript, runtime: bun }
+          - { name: javascript, runtime: deno }
     steps:
       - uses: actions/checkout@v6
       - uses: erlef/setup-beam@v1
@@ -17,6 +23,22 @@ jobs:
           otp-version: "28.3.0"
           gleam-version: "1.14.0"
           rebar3-version: "3.26.0"
+      - uses: oven-sh/setup-bun@v2
+        if: matrix.target.runtime == 'bun'
+      - uses: denoland/setup-deno@v2
+        if: matrix.target.runtime == 'deno'
+        with:
+          deno-version: v2.x
       - run: gleam deps download
-      - run: gleam test
+      - run: gleam test --target ${{ matrix.target.name }} ${{ matrix.target.runtime && format('--runtime {0}', matrix.target.runtime) || '' }}
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28.3.0"
+          gleam-version: "1.14.0"
+          rebar3-version: "3.26.0"
       - run: gleam format --check src test
