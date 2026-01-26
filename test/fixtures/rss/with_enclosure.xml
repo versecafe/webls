@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Podcast Feed</title>
+<link>https://example.com/podcast</link>
+<description>A podcast feed with enclosures</description>
+<item>
+<title>Episode 1</title>
+<description>The first episode</description>
+<enclosure url="https://example.com/ep1.mp3" length="12345678" type="audio/mpeg"/>
+</item>
+<item>
+<title>Episode 2</title>
+<description>The second episode</description>
+<link>https://example.com/podcast/ep2</link>
+<enclosure url="https://example.com/ep2.mp3" length="9876543" type="audio/mpeg"/>
+</item></channel>
+</rss>

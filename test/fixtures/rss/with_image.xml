@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Feed with Image</title>
+<link>https://example.com</link>
+<description>An RSS feed with an image</description>
+<image><url>https://example.com/logo.png</url>
+<title>Example Logo</title>
+<link>https://example.com</link>
+<description>The logo for Example</description>
+<width>144</width>
+<height>88</height>
+</image>
+<item>
+<title>Test Item</title>
+<description>Test description</description>
+</item></channel>
+</rss>

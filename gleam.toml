@@ -1,5 +1,5 @@
 name = "webls"
-version = "1.6.1"
+version = "2.0.0"
 
 description = "A simple web utility library for RSS feeds, Sitemaps, Robots.txt, etc."
 licences = ["Apache-2.0"]
@@ -8,6 +8,7 @@ repository = { type = "github", user = "versecafe", repo = "webls" }
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
 gleam_time = ">= 1.6.0 and < 2.0.0"
+parsed_it = ">= 0.1.1 and < 0.2.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Single Item Feed</title>
+<link>https://example.com</link>
+<description>A feed with just one item</description>
+<item>
+<title>Only Item</title>
+<description>The only item in this feed</description>
+</item></channel>
+</rss>

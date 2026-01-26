@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Cloud Feed</title>
+<link>https://example.com</link>
+<description>An RSS feed with cloud configuration</description>
+<cloud domain="rpc.example.com" port="80" path="/RPC2" registerProcedure="pingMe" protocol="soap"/>
+<ttl>60</ttl>
+<item>
+<title>Test Item</title>
+<description>Test description</description>
+</item></channel>
+</rss>

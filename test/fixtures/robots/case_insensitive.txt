@@ -1,0 +1,4 @@
+SITEMAP: https://example.com/sitemap.xml
+USER-AGENT: googlebot
+ALLOW: /posts/
+DISALLOW: /admin/

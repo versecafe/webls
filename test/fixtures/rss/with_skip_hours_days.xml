@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Skip Schedule Feed</title>
+<link>https://example.com</link>
+<description>An RSS feed with skip hours and days</description>
+<skipHours><hour>0</hour>
+<hour>1</hour>
+<hour>2</hour></skipHours>
+<skipDays><day>Saturday</day>
+<day>Sunday</day></skipDays>
+<item>
+<title>Test Item</title>
+<description>Test description</description>
+</item></channel>
+</rss>

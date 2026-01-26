@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Minimal Feed</title>
+<link>https://example.com</link>
+<description>A minimal RSS feed</description>
+</channel>
+</rss>

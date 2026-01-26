@@ -1,0 +1,6 @@
+# This is a robots.txt file with comments
+Sitemap: https://example.com/sitemap.xml
+
+User-agent: googlebot # Google's crawler
+Allow: /posts/
+Disallow: /admin/ # Keep admin private

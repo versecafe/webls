@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Categorized Feed</title>
+<link>https://example.com</link>
+<description>An RSS feed with categories</description>
+<category>Technology</category>
+<category>Programming</category>
+<item>
+<title>Gleam Article</title>
+<description>An article about Gleam</description>
+<category>Gleam</category>
+<category>Functional Programming</category>
+</item></channel>
+</rss>
