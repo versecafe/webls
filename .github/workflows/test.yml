@@ -30,12 +30,6 @@ jobs:
         with:
           deno-version: v2.x
       - run: gleam deps download
-      - run: npm install
-        if: matrix.target.runtime == 'node'
-      - run: bun install
-        if: matrix.target.runtime == 'bun'
-      - run: deno install
-        if: matrix.target.runtime == 'deno'
       - run: gleam test --target ${{ matrix.target.name }} ${{ matrix.target.runtime && format('--runtime {0}', matrix.target.runtime) || '' }}
 
   format:
