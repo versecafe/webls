@@ -272,3 +272,64 @@ pub fn sitemap_empty_test() -> Nil {
 </urlset>",
   )
 }
+
+/// Confirms parsing of sitemap index files
+pub fn sitemap_index_from_string_test() -> Nil {
+  let assert Ok(xml) =
+    simplifile.read("test/fixtures/sitemap/sitemap_index.xml")
+  let assert Ok(parsed) = sitemap.index_from_string(xml)
+
+  parsed.sitemaps
+  |> should.equal([
+    sitemap.SitemapReference(
+      loc: "https://example.com/sitemap-0.xml",
+      last_modified: None,
+    ),
+    sitemap.SitemapReference(
+      loc: "https://example.com/sitemap-1.xml",
+      last_modified: None,
+    ),
+  ])
+}
+
+/// Confirms parse function correctly detects regular sitemap
+pub fn sitemap_parse_regular_test() -> Nil {
+  let assert Ok(xml) = simplifile.read("test/fixtures/sitemap/minimal.xml")
+  let assert Ok(result) = sitemap.parse(xml)
+
+  case result {
+    sitemap.ParsedSitemap(sm) -> {
+      let assert [item] = sm.items
+      item.loc |> should.equal("https://example.com")
+    }
+    sitemap.ParsedSitemapIndex(_) -> {
+      panic as "Expected ParsedSitemap, got ParsedSitemapIndex"
+    }
+  }
+}
+
+/// Confirms parse function correctly detects sitemap index
+pub fn sitemap_parse_index_test() -> Nil {
+  let assert Ok(xml) =
+    simplifile.read("test/fixtures/sitemap/sitemap_index.xml")
+  let assert Ok(result) = sitemap.parse(xml)
+
+  case result {
+    sitemap.ParsedSitemap(_) -> {
+      panic as "Expected ParsedSitemapIndex, got ParsedSitemap"
+    }
+    sitemap.ParsedSitemapIndex(index) -> {
+      index.sitemaps
+      |> should.equal([
+        sitemap.SitemapReference(
+          loc: "https://example.com/sitemap-0.xml",
+          last_modified: None,
+        ),
+        sitemap.SitemapReference(
+          loc: "https://example.com/sitemap-1.xml",
+          last_modified: None,
+        ),
+      ])
+    }
+  }
+}

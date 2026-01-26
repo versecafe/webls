@@ -23,6 +23,34 @@ pub fn to_string(sitemap: Sitemap) -> String {
   <> "\n</urlset>"
 }
 
+/// Generates a sitemap index XML string from a sitemap index
+pub fn index_to_string(index: SitemapIndex) -> String {
+  let sitemap_content =
+    index.sitemaps
+    |> list.map(fn(ref) { ref |> sitemap_reference_to_string })
+    |> list.reduce(fn(acc, ref_string) { acc <> "\n" <> ref_string })
+    |> result.unwrap("")
+
+  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+  <> sitemap_content
+  <> "\n</sitemapindex>"
+}
+
+fn sitemap_reference_to_string(ref: SitemapReference) -> String {
+  "<sitemap>\n"
+  <> "<loc>"
+  <> ref.loc
+  <> "</loc>\n"
+  <> case ref.last_modified {
+    Some(date) ->
+      "<lastmod>"
+      <> date |> timestamp.to_rfc3339(calendar.utc_offset)
+      <> "</lastmod>\n"
+    _ -> ""
+  }
+  <> "</sitemap>"
+}
+
 fn sitemap_item_to_string(item: SitemapItem) -> String {
   "<url>\n"
   <> "<loc>"
@@ -116,6 +144,40 @@ pub fn with_item_last_modified(
   SitemapItem(..item, last_modified: Some(modified))
 }
 
+/// Create an empty sitemap index
+pub fn sitemap_index() -> SitemapIndex {
+  SitemapIndex(sitemaps: [])
+}
+
+/// Adds a sitemap reference to the sitemap index
+pub fn with_index_sitemap(
+  index: SitemapIndex,
+  ref: SitemapReference,
+) -> SitemapIndex {
+  SitemapIndex(sitemaps: [ref, ..index.sitemaps])
+}
+
+/// Adds a list of sitemap references to the sitemap index
+pub fn with_index_sitemaps(
+  index: SitemapIndex,
+  refs: List(SitemapReference),
+) -> SitemapIndex {
+  SitemapIndex(sitemaps: list.flatten([index.sitemaps, refs]))
+}
+
+/// Create a sitemap reference with a URL location
+pub fn reference(loc: String) -> SitemapReference {
+  SitemapReference(loc: loc, last_modified: None)
+}
+
+/// Add a last modified time to a sitemap reference
+pub fn with_reference_last_modified(
+  ref: SitemapReference,
+  last_modified: Timestamp,
+) -> SitemapReference {
+  SitemapReference(..ref, last_modified: Some(last_modified))
+}
+
 // Types ----------------------------------------------------------------------
 
 /// A complete sitemap
@@ -127,6 +189,24 @@ pub type Sitemap {
     last_modified: Option(Timestamp),
     /// The list of items contained within the sitemap
     items: List(SitemapItem),
+  )
+}
+
+/// A sitemap index that references multiple sitemaps
+pub type SitemapIndex {
+  SitemapIndex(
+    /// The list of sitemap references
+    sitemaps: List(SitemapReference),
+  )
+}
+
+/// A reference to a sitemap within a sitemap index
+pub type SitemapReference {
+  SitemapReference(
+    /// The location URL of the sitemap
+    loc: String,
+    /// The time of last modification of the referenced sitemap
+    last_modified: Option(Timestamp),
   )
 }
 
@@ -158,9 +238,37 @@ pub type ChangeFrequency {
 
 // Decoders -------------------------------------------------------------------
 
+/// Result of parsing a sitemap XML - either a regular sitemap or an index
+pub type SitemapParseResult {
+  ParsedSitemap(Sitemap)
+  ParsedSitemapIndex(SitemapIndex)
+}
+
 /// Parses a sitemap XML string into a Sitemap
 pub fn from_string(sitemap_xml: String) -> Result(Sitemap, xml.XmlDecodeError) {
   xml.parse(from: sitemap_xml, using: sitemap_decoder())
+}
+
+/// Parses a sitemap index XML string into a SitemapIndex
+pub fn index_from_string(
+  sitemap_xml: String,
+) -> Result(SitemapIndex, xml.XmlDecodeError) {
+  xml.parse(from: sitemap_xml, using: sitemap_index_decoder())
+}
+
+/// Parses a sitemap XML string, detecting whether it's a regular sitemap or index
+/// Returns a SitemapParseResult indicating which type was parsed
+pub fn parse(sitemap_xml: String) -> Result(SitemapParseResult, xml.XmlDecodeError) {
+  // Try parsing as regular sitemap first
+  case from_string(sitemap_xml) {
+    Ok(sitemap) -> Ok(ParsedSitemap(sitemap))
+    Error(_) ->
+      // Try parsing as sitemap index
+      case index_from_string(sitemap_xml) {
+        Ok(index) -> Ok(ParsedSitemapIndex(index))
+        Error(e) -> Error(e)
+      }
+  }
 }
 
 fn sitemap_decoder() -> decode.Decoder(Sitemap) {
@@ -230,4 +338,26 @@ fn timestamp_decoder() -> decode.Decoder(Timestamp) {
     Ok(ts) -> decode.success(ts)
     Error(_) -> decode.failure(timestamp.from_unix_seconds(0), "Timestamp")
   }
+}
+
+fn sitemap_index_decoder() -> decode.Decoder(SitemapIndex) {
+  // sitemapindex is the root element, sitemap children contain the references
+  use sitemaps <- decode.field(
+    "sitemap",
+    decode.one_of(
+      decode.list(sitemap_reference_decoder()),
+      [sitemap_reference_decoder() |> decode.map(fn(ref) { [ref] })],
+    ),
+  )
+  decode.success(SitemapIndex(sitemaps:))
+}
+
+fn sitemap_reference_decoder() -> decode.Decoder(SitemapReference) {
+  use loc <- decode.field("loc", decode.at(["$text"], decode.string))
+  use last_modified <- decode.optional_field(
+    "lastmod",
+    None,
+    decode.optional(timestamp_decoder()),
+  )
+  decode.success(SitemapReference(loc:, last_modified:))
 }
