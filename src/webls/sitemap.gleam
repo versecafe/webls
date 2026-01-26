@@ -1,9 +1,12 @@
+import gleam/dynamic/decode
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/time/calendar
 import gleam/time/timestamp.{type Timestamp}
+import parsed_it/xml
 
 // Stringify ------------------------------------------------------------------
 
@@ -151,4 +154,80 @@ pub type ChangeFrequency {
   Monthly
   Yearly
   Never
+}
+
+// Decoders -------------------------------------------------------------------
+
+/// Parses a sitemap XML string into a Sitemap
+pub fn from_string(sitemap_xml: String) -> Result(Sitemap, xml.XmlDecodeError) {
+  xml.parse(from: sitemap_xml, using: sitemap_decoder())
+}
+
+fn sitemap_decoder() -> decode.Decoder(Sitemap) {
+  // urlset is the root element, url children contain the items
+  // When there are multiple <url> elements, they become a list
+  // When there's a single <url> element, it's a single object
+  use items <- decode.field(
+    "url",
+    decode.one_of(
+      decode.list(sitemap_item_decoder()),
+      [sitemap_item_decoder() |> decode.map(fn(item) { [item] })],
+    ),
+  )
+  decode.success(Sitemap(url: "", last_modified: None, items:))
+}
+
+fn change_frequency_decoder() -> decode.Decoder(ChangeFrequency) {
+  use variant <- decode.then(decode.at(["$text"], decode.string))
+  case variant {
+    "always" -> decode.success(Always)
+    "hourly" -> decode.success(Hourly)
+    "daily" -> decode.success(Daily)
+    "weekly" -> decode.success(Weekly)
+    "monthly" -> decode.success(Monthly)
+    "yearly" -> decode.success(Yearly)
+    "never" -> decode.success(Never)
+    _ -> decode.failure(Never, "ChangeFrequency")
+  }
+}
+
+fn sitemap_item_decoder() -> decode.Decoder(SitemapItem) {
+  use loc <- decode.field("loc", decode.at(["$text"], decode.string))
+  use last_modified <- decode.optional_field(
+    "lastmod",
+    None,
+    decode.optional(timestamp_decoder()),
+  )
+  use change_frequency <- decode.optional_field(
+    "changefreq",
+    None,
+    decode.optional(change_frequency_decoder()),
+  )
+  use priority <- decode.optional_field(
+    "priority",
+    None,
+    decode.optional(decode.at(["$text"], string_float_decoder())),
+  )
+  decode.success(SitemapItem(loc:, last_modified:, change_frequency:, priority:))
+}
+
+fn string_float_decoder() -> decode.Decoder(Float) {
+  use str <- decode.then(decode.string)
+  case float.parse(str) {
+    Ok(f) -> decode.success(f)
+    Error(_) ->
+      // Try parsing as int and convert to float
+      case int.parse(str) {
+        Ok(i) -> decode.success(int.to_float(i))
+        Error(_) -> decode.failure(0.0, "Float")
+      }
+  }
+}
+
+fn timestamp_decoder() -> decode.Decoder(Timestamp) {
+  use date_str <- decode.then(decode.at(["$text"], decode.string))
+  case timestamp.parse_rfc3339(date_str) {
+    Ok(ts) -> decode.success(ts)
+    Error(_) -> decode.failure(timestamp.from_unix_seconds(0), "Timestamp")
+  }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Full Featured Feed</title>
+<link>https://example.com</link>
+<description>An RSS feed with all channel fields</description>
+<language>en-us</language>
+<copyright>Copyright 2024 Example Inc.</copyright>
+<managingEditor>editor@example.com</managingEditor>
+<webMaster>webmaster@example.com</webMaster>
+<pubDate>2024-01-15T12:00:00.000Z</pubDate>
+<lastBuildDate>2024-06-20T08:30:00.000Z</lastBuildDate>
+<category>Technology</category>
+<generator>webls</generator>
+<docs>https://www.rssboard.org/rss-2-0-1</docs>
+<ttl>30</ttl>
+<item>
+<title>Full Item</title>
+<description>An item with all fields</description>
+<link>https://example.com/full-item</link>
+<author>author@example.com</author>
+<comments>https://example.com/full-item/comments</comments>
+<pubDate>2024-06-20T08:00:00.000Z</pubDate>
+<source>Original Source</source>
+<guid isPermaLink="true">https://example.com/full-item</guid>
+</item></channel>
+</rss>

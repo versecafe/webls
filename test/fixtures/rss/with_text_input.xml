@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0.1">
+<channel>
+<title>Searchable Feed</title>
+<link>https://example.com</link>
+<description>An RSS feed with text input</description>
+<textInput><title>Search</title>
+<description>Search this feed</description>
+<name>q</name>
+<link>https://example.com/search</link>
+</textInput>
+<item>
+<title>Test Item</title>
+<description>Test description</description>
+</item></channel>
+</rss>

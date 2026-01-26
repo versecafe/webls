@@ -1,9 +1,12 @@
+import gleam/dynamic/decode
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/string
 import gleam/time/calendar
 import gleam/time/timestamp.{type Timestamp}
+import parsed_it/xml
 
 // Stringify ------------------------------------------------------------------
 
@@ -612,4 +615,333 @@ pub type Weekday {
   Friday
   Saturday
   Sunday
+}
+
+// Decoders -------------------------------------------------------------------
+
+/// Parses an RSS XML string into a list of RssChannels
+pub fn from_string(rss_xml: String) -> Result(List(RssChannel), xml.XmlDecodeError) {
+  xml.parse(from: rss_xml, using: rss_decoder())
+}
+
+fn rss_decoder() -> decode.Decoder(List(RssChannel)) {
+  // rss -> channel (single or list)
+  use channels <- decode.field(
+    "channel",
+    decode.one_of(
+      decode.list(channel_decoder()),
+      [channel_decoder() |> decode.map(fn(ch) { [ch] })],
+    ),
+  )
+  decode.success(channels)
+}
+
+fn channel_decoder() -> decode.Decoder(RssChannel) {
+  use title <- decode.field("title", text_decoder())
+  use link <- decode.field("link", text_decoder())
+  use description <- decode.field("description", text_decoder())
+  use language <- decode.optional_field(
+    "language",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use copyright <- decode.optional_field(
+    "copyright",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use managing_editor <- decode.optional_field(
+    "managingEditor",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use web_master <- decode.optional_field(
+    "webMaster",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use pub_date <- decode.optional_field(
+    "pubDate",
+    None,
+    decode.optional(timestamp_decoder()),
+  )
+  use last_build_date <- decode.optional_field(
+    "lastBuildDate",
+    None,
+    decode.optional(timestamp_decoder()),
+  )
+  use categories <- decode.optional_field(
+    "category",
+    [],
+    categories_decoder(),
+  )
+  use generator <- decode.optional_field(
+    "generator",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use docs <- decode.optional_field(
+    "docs",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use cloud <- decode.optional_field(
+    "cloud",
+    None,
+    decode.optional(cloud_decoder()),
+  )
+  use ttl <- decode.optional_field(
+    "ttl",
+    None,
+    decode.optional(int_text_decoder()),
+  )
+  use image <- decode.optional_field(
+    "image",
+    None,
+    decode.optional(image_decoder()),
+  )
+  use text_input <- decode.optional_field(
+    "textInput",
+    None,
+    decode.optional(text_input_decoder()),
+  )
+  use skip_hours <- decode.optional_field(
+    "skipHours",
+    [],
+    skip_hours_decoder(),
+  )
+  use skip_days <- decode.optional_field(
+    "skipDays",
+    [],
+    skip_days_decoder(),
+  )
+  use items <- decode.optional_field(
+    "item",
+    [],
+    decode.one_of(
+      decode.list(item_decoder()),
+      [item_decoder() |> decode.map(fn(item) { [item] })],
+    ),
+  )
+  decode.success(RssChannel(
+    title:,
+    link:,
+    description:,
+    language:,
+    copyright:,
+    managing_editor:,
+    web_master:,
+    pub_date:,
+    last_build_date:,
+    categories:,
+    generator:,
+    docs:,
+    cloud:,
+    ttl:,
+    image:,
+    text_input:,
+    skip_hours:,
+    skip_days:,
+    items:,
+  ))
+}
+
+fn item_decoder() -> decode.Decoder(RssItem) {
+  use title <- decode.field("title", text_decoder())
+  use description <- decode.field("description", text_decoder())
+  use link <- decode.optional_field(
+    "link",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use author <- decode.optional_field(
+    "author",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use comments <- decode.optional_field(
+    "comments",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use source <- decode.optional_field(
+    "source",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use pub_date <- decode.optional_field(
+    "pubDate",
+    None,
+    decode.optional(timestamp_decoder()),
+  )
+  use categories <- decode.optional_field(
+    "category",
+    [],
+    categories_decoder(),
+  )
+  use enclosure <- decode.optional_field(
+    "enclosure",
+    None,
+    decode.optional(enclosure_decoder()),
+  )
+  use guid <- decode.optional_field(
+    "guid",
+    None,
+    decode.optional(guid_decoder()),
+  )
+  decode.success(RssItem(
+    title:,
+    description:,
+    link:,
+    author:,
+    comments:,
+    source:,
+    pub_date:,
+    categories:,
+    enclosure:,
+    guid:,
+  ))
+}
+
+fn text_decoder() -> decode.Decoder(String) {
+  decode.at(["$text"], decode.string)
+}
+
+fn int_text_decoder() -> decode.Decoder(Int) {
+  use str <- decode.then(text_decoder())
+  case int.parse(str) {
+    Ok(i) -> decode.success(i)
+    Error(_) -> decode.failure(0, "Int")
+  }
+}
+
+fn timestamp_decoder() -> decode.Decoder(Timestamp) {
+  use date_str <- decode.then(text_decoder())
+  case timestamp.parse_rfc3339(date_str) {
+    Ok(ts) -> decode.success(ts)
+    Error(_) -> decode.failure(timestamp.from_unix_seconds(0), "Timestamp")
+  }
+}
+
+fn categories_decoder() -> decode.Decoder(List(String)) {
+  decode.one_of(
+    decode.list(text_decoder()),
+    [text_decoder() |> decode.map(fn(cat) { [cat] })],
+  )
+}
+
+fn cloud_decoder() -> decode.Decoder(Cloud) {
+  // Cloud element uses attributes: domain, port, path, registerProcedure, protocol
+  use domain <- decode.field("$attrs", decode.at(["domain"], decode.string))
+  use port <- decode.field("$attrs", decode.at(["port"], string_int_decoder()))
+  use path <- decode.field("$attrs", decode.at(["path"], decode.string))
+  use register_procedure <- decode.field(
+    "$attrs",
+    decode.at(["registerProcedure"], decode.string),
+  )
+  use protocol <- decode.field("$attrs", decode.at(["protocol"], decode.string))
+  decode.success(Cloud(domain:, port:, path:, register_procedure:, protocol:))
+}
+
+fn string_int_decoder() -> decode.Decoder(Int) {
+  use str <- decode.then(decode.string)
+  case int.parse(str) {
+    Ok(i) -> decode.success(i)
+    Error(_) -> decode.failure(0, "Int")
+  }
+}
+
+fn image_decoder() -> decode.Decoder(Image) {
+  use url <- decode.field("url", text_decoder())
+  use title <- decode.field("title", text_decoder())
+  use link <- decode.field("link", text_decoder())
+  use description <- decode.optional_field(
+    "description",
+    None,
+    decode.optional(text_decoder()),
+  )
+  use width <- decode.optional_field(
+    "width",
+    None,
+    decode.optional(int_text_decoder()),
+  )
+  use height <- decode.optional_field(
+    "height",
+    None,
+    decode.optional(int_text_decoder()),
+  )
+  decode.success(Image(url:, title:, link:, description:, width:, height:))
+}
+
+fn text_input_decoder() -> decode.Decoder(TextInput) {
+  use title <- decode.field("title", text_decoder())
+  use description <- decode.field("description", text_decoder())
+  use name <- decode.field("name", text_decoder())
+  use link <- decode.field("link", text_decoder())
+  decode.success(TextInput(title:, description:, name:, link:))
+}
+
+fn enclosure_decoder() -> decode.Decoder(Enclosure) {
+  // Enclosure element uses attributes: url, length, type
+  use url <- decode.field("$attrs", decode.at(["url"], decode.string))
+  use length <- decode.field("$attrs", decode.at(["length"], string_int_decoder()))
+  use enclosure_type <- decode.field("$attrs", decode.at(["type"], decode.string))
+  decode.success(Enclosure(url:, length:, enclosure_type:))
+}
+
+fn guid_decoder() -> decode.Decoder(#(String, Option(Bool))) {
+  use guid_text <- decode.field("$text", decode.string)
+  use is_permalink <- decode.optional_field(
+    "$attrs",
+    None,
+    decode.optional(decode.at(["isPermaLink"], bool_string_decoder())),
+  )
+  decode.success(#(guid_text, is_permalink))
+}
+
+fn bool_string_decoder() -> decode.Decoder(Bool) {
+  use s <- decode.then(decode.string)
+  case string.lowercase(s) {
+    "true" -> decode.success(True)
+    "false" -> decode.success(False)
+    _ -> decode.failure(False, "Bool")
+  }
+}
+
+fn skip_hours_decoder() -> decode.Decoder(List(Int)) {
+  use hours <- decode.optional_field(
+    "hour",
+    [],
+    decode.one_of(
+      decode.list(int_text_decoder()),
+      [int_text_decoder() |> decode.map(fn(h) { [h] })],
+    ),
+  )
+  decode.success(hours)
+}
+
+fn skip_days_decoder() -> decode.Decoder(List(Weekday)) {
+  use days <- decode.optional_field(
+    "day",
+    [],
+    decode.one_of(
+      decode.list(weekday_decoder()),
+      [weekday_decoder() |> decode.map(fn(d) { [d] })],
+    ),
+  )
+  decode.success(days)
+}
+
+fn weekday_decoder() -> decode.Decoder(Weekday) {
+  use day_str <- decode.then(text_decoder())
+  case string.lowercase(day_str) {
+    "monday" -> decode.success(Monday)
+    "tuesday" -> decode.success(Tuesday)
+    "wednesday" -> decode.success(Wednesday)
+    "thursday" -> decode.success(Thursday)
+    "friday" -> decode.success(Friday)
+    "saturday" -> decode.success(Saturday)
+    "sunday" -> decode.success(Sunday)
+    _ -> decode.failure(Monday, "Weekday")
+  }
 }

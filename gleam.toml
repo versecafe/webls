@@ -8,6 +8,7 @@ repository = { type = "github", user = "versecafe", repo = "webls" }
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
 gleam_time = ">= 1.6.0 and < 2.0.0"
+parsed_it = { path = "../parsed_it" }
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

@@ -78,17 +78,16 @@ Further documentation can be found at <https://hexdocs.pm/webls>.
 
 ## Utility Support
 
-| Type       | to_string | Builder Functions | Validators |
-| ---------- | --------- | ----------------- | ---------- |
-| Sitemap    | Complete  | Complete          | None       |
-| RSS v2.0   | Complete  | Complete          | None       |
-| Robots.txt | Complete  | Complete          | None       |
-| Atom       | Complete  | Complete          | None       |
+| Type       | Builder Functions | to_string | from_string |
+| ---------- | ----------------- | --------- | ----------- |
+| Sitemap    | Complete          | Complete  | Complete    |
+| RSS v2.0   | Complete          | Complete  | Complete    |
+| Robots.txt | Complete          | Complete  | Complete    |
+| Atom       | Complete          | Complete  | None        |
 
 ## Development
 
 ```sh
-gleam run   # Run the project
 gleam test  # Run the tests
 ```
 
