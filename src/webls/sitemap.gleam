@@ -258,7 +258,9 @@ pub fn index_from_string(
 
 /// Parses a sitemap XML string, detecting whether it's a regular sitemap or index
 /// Returns a SitemapParseResult indicating which type was parsed
-pub fn parse(sitemap_xml: String) -> Result(SitemapParseResult, xml.XmlDecodeError) {
+pub fn parse(
+  sitemap_xml: String,
+) -> Result(SitemapParseResult, xml.XmlDecodeError) {
   // Try parsing as regular sitemap first
   case from_string(sitemap_xml) {
     Ok(sitemap) -> Ok(ParsedSitemap(sitemap))
@@ -277,10 +279,9 @@ fn sitemap_decoder() -> decode.Decoder(Sitemap) {
   // When there's a single <url> element, it's a single object
   use items <- decode.field(
     "url",
-    decode.one_of(
-      decode.list(sitemap_item_decoder()),
-      [sitemap_item_decoder() |> decode.map(fn(item) { [item] })],
-    ),
+    decode.one_of(decode.list(sitemap_item_decoder()), [
+      sitemap_item_decoder() |> decode.map(fn(item) { [item] }),
+    ]),
   )
   decode.success(Sitemap(url: "", last_modified: None, items:))
 }
@@ -344,10 +345,9 @@ fn sitemap_index_decoder() -> decode.Decoder(SitemapIndex) {
   // sitemapindex is the root element, sitemap children contain the references
   use sitemaps <- decode.field(
     "sitemap",
-    decode.one_of(
-      decode.list(sitemap_reference_decoder()),
-      [sitemap_reference_decoder() |> decode.map(fn(ref) { [ref] })],
-    ),
+    decode.one_of(decode.list(sitemap_reference_decoder()), [
+      sitemap_reference_decoder() |> decode.map(fn(ref) { [ref] }),
+    ]),
   )
   decode.success(SitemapIndex(sitemaps:))
 }

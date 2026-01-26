@@ -83,8 +83,7 @@ pub fn sitemap_roundtrip_test() -> Nil {
 
 /// Confirms parsing of sitemap with lastmod dates
 pub fn sitemap_from_string_with_lastmod_test() -> Nil {
-  let assert Ok(xml) =
-    simplifile.read("test/fixtures/sitemap/with_lastmod.xml")
+  let assert Ok(xml) = simplifile.read("test/fixtures/sitemap/with_lastmod.xml")
   let assert Ok(parsed) = sitemap.from_string(xml)
 
   let assert [item1, item2] = parsed.items
@@ -219,7 +218,7 @@ pub fn sitemap_priority_clamp_high_test() -> Nil {
     sitemap.sitemap("https://example.com/sitemap.xml")
     |> sitemap.with_sitemap_items([
       sitemap.item("https://example.com")
-        |> sitemap.with_item_priority(2.0),
+      |> sitemap.with_item_priority(2.0),
     ])
 
   // Should contain priority 1.0, not 2.0
@@ -242,7 +241,7 @@ pub fn sitemap_priority_clamp_low_test() -> Nil {
     sitemap.sitemap("https://example.com/sitemap.xml")
     |> sitemap.with_sitemap_items([
       sitemap.item("https://example.com")
-        |> sitemap.with_item_priority(-0.5),
+      |> sitemap.with_item_priority(-0.5),
     ])
 
   // Should contain priority 0.0, not -0.5

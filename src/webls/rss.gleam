@@ -620,7 +620,9 @@ pub type Weekday {
 // Decoders -------------------------------------------------------------------
 
 /// Parses an RSS XML string into a list of RssChannels
-pub fn from_string(rss_xml: String) -> Result(List(RssChannel), xml.XmlDecodeError) {
+pub fn from_string(
+  rss_xml: String,
+) -> Result(List(RssChannel), xml.XmlDecodeError) {
   xml.parse(from: rss_xml, using: rss_decoder())
 }
 
@@ -628,10 +630,9 @@ fn rss_decoder() -> decode.Decoder(List(RssChannel)) {
   // rss -> channel (single or list)
   use channels <- decode.field(
     "channel",
-    decode.one_of(
-      decode.list(channel_decoder()),
-      [channel_decoder() |> decode.map(fn(ch) { [ch] })],
-    ),
+    decode.one_of(decode.list(channel_decoder()), [
+      channel_decoder() |> decode.map(fn(ch) { [ch] }),
+    ]),
   )
   decode.success(channels)
 }
@@ -670,11 +671,7 @@ fn channel_decoder() -> decode.Decoder(RssChannel) {
     None,
     decode.optional(timestamp_decoder()),
   )
-  use categories <- decode.optional_field(
-    "category",
-    [],
-    categories_decoder(),
-  )
+  use categories <- decode.optional_field("category", [], categories_decoder())
   use generator <- decode.optional_field(
     "generator",
     None,
@@ -705,23 +702,14 @@ fn channel_decoder() -> decode.Decoder(RssChannel) {
     None,
     decode.optional(text_input_decoder()),
   )
-  use skip_hours <- decode.optional_field(
-    "skipHours",
-    [],
-    skip_hours_decoder(),
-  )
-  use skip_days <- decode.optional_field(
-    "skipDays",
-    [],
-    skip_days_decoder(),
-  )
+  use skip_hours <- decode.optional_field("skipHours", [], skip_hours_decoder())
+  use skip_days <- decode.optional_field("skipDays", [], skip_days_decoder())
   use items <- decode.optional_field(
     "item",
     [],
-    decode.one_of(
-      decode.list(item_decoder()),
-      [item_decoder() |> decode.map(fn(item) { [item] })],
-    ),
+    decode.one_of(decode.list(item_decoder()), [
+      item_decoder() |> decode.map(fn(item) { [item] }),
+    ]),
   )
   decode.success(RssChannel(
     title:,
@@ -774,11 +762,7 @@ fn item_decoder() -> decode.Decoder(RssItem) {
     None,
     decode.optional(timestamp_decoder()),
   )
-  use categories <- decode.optional_field(
-    "category",
-    [],
-    categories_decoder(),
-  )
+  use categories <- decode.optional_field("category", [], categories_decoder())
   use enclosure <- decode.optional_field(
     "enclosure",
     None,
@@ -824,10 +808,9 @@ fn timestamp_decoder() -> decode.Decoder(Timestamp) {
 }
 
 fn categories_decoder() -> decode.Decoder(List(String)) {
-  decode.one_of(
-    decode.list(text_decoder()),
-    [text_decoder() |> decode.map(fn(cat) { [cat] })],
-  )
+  decode.one_of(decode.list(text_decoder()), [
+    text_decoder() |> decode.map(fn(cat) { [cat] }),
+  ])
 }
 
 fn cloud_decoder() -> decode.Decoder(Cloud) {
@@ -884,8 +867,14 @@ fn text_input_decoder() -> decode.Decoder(TextInput) {
 fn enclosure_decoder() -> decode.Decoder(Enclosure) {
   // Enclosure element uses attributes: url, length, type
   use url <- decode.field("$attrs", decode.at(["url"], decode.string))
-  use length <- decode.field("$attrs", decode.at(["length"], string_int_decoder()))
-  use enclosure_type <- decode.field("$attrs", decode.at(["type"], decode.string))
+  use length <- decode.field(
+    "$attrs",
+    decode.at(["length"], string_int_decoder()),
+  )
+  use enclosure_type <- decode.field(
+    "$attrs",
+    decode.at(["type"], decode.string),
+  )
   decode.success(Enclosure(url:, length:, enclosure_type:))
 }
 
@@ -912,10 +901,9 @@ fn skip_hours_decoder() -> decode.Decoder(List(Int)) {
   use hours <- decode.optional_field(
     "hour",
     [],
-    decode.one_of(
-      decode.list(int_text_decoder()),
-      [int_text_decoder() |> decode.map(fn(h) { [h] })],
-    ),
+    decode.one_of(decode.list(int_text_decoder()), [
+      int_text_decoder() |> decode.map(fn(h) { [h] }),
+    ]),
   )
   decode.success(hours)
 }
@@ -924,10 +912,9 @@ fn skip_days_decoder() -> decode.Decoder(List(Weekday)) {
   use days <- decode.optional_field(
     "day",
     [],
-    decode.one_of(
-      decode.list(weekday_decoder()),
-      [weekday_decoder() |> decode.map(fn(d) { [d] })],
-    ),
+    decode.one_of(decode.list(weekday_decoder()), [
+      weekday_decoder() |> decode.map(fn(d) { [d] }),
+    ]),
   )
   decode.success(days)
 }

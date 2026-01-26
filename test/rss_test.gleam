@@ -74,7 +74,7 @@ pub fn rss_roundtrip_test() -> Nil {
     |> rss.with_channel_language("en-us")
     |> rss.with_channel_items([
       rss.item("Article 1", "First article content")
-        |> rss.with_item_link("https://example.com/article-1"),
+      |> rss.with_item_link("https://example.com/article-1"),
     ]),
   ]
 
@@ -219,7 +219,8 @@ pub fn rss_from_string_full_channel_test() -> Nil {
   item.author |> should.equal(Some("author@example.com"))
   item.comments |> should.equal(Some("https://example.com/full-item/comments"))
   item.source |> should.equal(Some("Original Source"))
-  item.guid |> should.equal(Some(#("https://example.com/full-item", Some(True))))
+  item.guid
+  |> should.equal(Some(#("https://example.com/full-item", Some(True))))
 }
 
 /// Confirms parsing handles single item (not wrapped in list)
