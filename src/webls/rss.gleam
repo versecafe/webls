@@ -2,8 +2,9 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/time/calendar
 import gleam/time/timestamp.{type Timestamp}
+import tempo
+import tempo/datetime
 
 // Stringify ------------------------------------------------------------------
 
@@ -56,15 +57,13 @@ fn rss_channel_to_string(channel: RssChannel) -> String {
   }
   <> case channel.pub_date {
     Some(pub_date) ->
-      "<pubDate>"
-      <> pub_date |> timestamp.to_rfc3339(calendar.utc_offset)
-      <> "</pubDate>\n"
+      "<pubDate>" <> pub_date |> timestamp_to_rfc822 <> "</pubDate>\n"
     _ -> ""
   }
   <> case channel.last_build_date {
     Some(last_build_date) ->
       "<lastBuildDate>"
-      <> last_build_date |> timestamp.to_rfc3339(calendar.utc_offset)
+      <> last_build_date |> timestamp_to_rfc822
       <> "</lastBuildDate>\n"
     _ -> ""
   }
@@ -199,9 +198,7 @@ fn rss_item_to_string(item: RssItem) -> String {
   }
   <> case item.pub_date {
     Some(pub_date) ->
-      "<pubDate>"
-      <> pub_date |> timestamp.to_rfc3339(calendar.utc_offset)
-      <> "</pubDate>\n"
+      "<pubDate>" <> pub_date |> timestamp_to_rfc822 <> "</pubDate>\n"
     _ -> ""
   }
   <> item.categories
@@ -237,6 +234,13 @@ fn rss_item_to_string(item: RssItem) -> String {
     _ -> ""
   }
   <> "</item>"
+}
+
+/// Converts a timestamp to an RFC 822 date string as required by the RSS 2.0 spec
+fn timestamp_to_rfc822(ts: Timestamp) -> String {
+  ts
+  |> datetime.from_timestamp
+  |> datetime.format(tempo.HTTP)
 }
 
 fn weekday_to_string(weekday: Weekday) -> String {
